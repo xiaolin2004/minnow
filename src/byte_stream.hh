@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <deque>
 #include <string>
 #include <string_view>
 
@@ -25,6 +26,18 @@ protected:
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
   uint64_t capacity_;
   bool error_ {};
+  // buffer
+  std::deque<char> buff;
+  mutable bool closed {};
+  mutable bool reading {};
+  mutable uint64_t byte_popped = 0;
+  mutable uint64_t byte_pushed = 0;
+
+  const std::deque<char>& get_buffer() const { return this->buff; }
+
+  std::deque<char>& set_buffer() { return this->buff; }
+
+  void flip_reading() { reading = !reading; }
 };
 
 class Writer : public ByteStream
